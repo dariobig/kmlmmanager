@@ -1,5 +1,5 @@
 /*
- * @name KMLManager
+ * @name KMLMManager
  * @version 0.1
  * @copyright (c) 2009 Dario Bigongiari
  * @author Dario Bigongiari
@@ -30,7 +30,7 @@
  * ------------------------------------------------------------------------------
  *
  *
- * The KMLManager object makes it possible to use MarkerManager (v1.1) with public KML files, such
+ * The KMLMManager object makes it possible to use MarkerManager (v1.1) with public KML files, such
  * as "my maps" files. Markers are added to the manager only when first needed (depending on the
  * zoomLevel) and cached to speed up reloading. KML files have to be divided by zoom level. Each
  * file will be loaded only when the MarkerManager actually needs it. Files can also be prefetched
@@ -57,7 +57,7 @@
  *   <head>
  *     <script src="http://maps.google.com/maps?file=api&amp;v=2.149&amp;key=__YOUR_KEY_HERE__" type="text/javascript"></script>
  *   <script type="text/javascript" charset="utf-8" src="./markermanager.js"></script>
- *   <script type="text/javascript" charset="utf-8" src="./kmlmanager.js"></script>
+ *   <script type="text/javascript" charset="utf-8" src="./KMLMManager.js"></script>
  *   </head>
  *   <body>
  *     <div id="map"></div>
@@ -70,7 +70,7 @@
  *       var zoomLevels = { low: 15, high: 8 };
  *
  *       // Create the manager object and show markers...
- *       manager = new KMLManager(map, kmlFiles, zoomLevels);
+ *       manager = new KMLMManager(map, kmlFiles, zoomLevels);
  *       manager.show();
  *     </script>
  *   </body>
@@ -78,15 +78,15 @@
  *
  */
 
-function KMLManager(map, kmlFiles, zoomLevels, prefetchZoom, managerOptions) {
-  // KMLManager should be always instanciated using the "new" keyword.
-  //  map: is a GMap2 object (tested only with version 2.149, see above).
-  //  kmlFiles: is a flat object containing kml urls divided by labels.
-  //  zoomLevels: is a flat object containing the minimum zoomLevel for each kmlFiles label.
-  //  prefetchZoom: is an integer used to trigger prefetching of kml files before their actual
-  //                zoomLevel (default: 2).
-  //  managerOptions: are the options to be passed to the MarkerManager object upon construction
-  //                  (default: {}).
+function KMLMManager(map, kmlFiles, zoomLevels, prefetchZoom, managerOptions) {
+  // KMLMManager should be always instanciated using the "new" keyword.
+  //   map: is a GMap2 object (tested only with version 2.149, see above).
+  //   kmlFiles: is a flat object containing kml urls divided by labels.
+  //   zoomLevels: is a flat object containing the minimum zoomLevel for each kmlFiles label.
+  //   prefetchZoom: is an integer used to trigger prefetching of kml files before their actual
+  //                 zoomLevel (default: 2).
+  //   managerOptions: are the options to be passed to the MarkerManager object upon construction
+  //                   (default: {}).
 
   // Registers an handler to update the MarkerManager and shows all the markers.
   // If prefetch array is specified, all the labels contained in the array are prefetched for faster
@@ -105,7 +105,7 @@ function KMLManager(map, kmlFiles, zoomLevels, prefetchZoom, managerOptions) {
 
   // Hidea all the markers and prevent further loading.
   this.hide = function() {
-    GEvent.removeListener(listener);
+    if (listener) { GEvent.removeListener(listener); }
     manager.hide();
   }
 
