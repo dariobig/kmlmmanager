@@ -46,8 +46,8 @@
  *  google.load("maps", "2.149");
  * or trough the script url:
  *   http://maps.google.com/maps?file=api&amp;v=2.149&amp;key=__YOUR_KEY_HERE__
- * To support a new version of the GMaps API you could try to adapt the extractMarkers function to 
- * the new internal structure of the GGeoXml object. 
+ * To support a new version of the GMaps API you could try to adapt the extractMarkers function to
+ * the new internal structure of the GGeoXml object.
  *
  *
  * Usage example:
@@ -112,7 +112,7 @@ function KMLMManager(map, kmlFiles, zoomLevels, prefetchZoom, managerOptions) {
   // If shouldRefresh is true it will also refresh the manager afterwards.
   this.removeAll = function(shouldRefresh) {
     for (label in zoomLevels) {
-      if (zoomLevels.hasOwnProperty(label)) { 
+      if (zoomLevels.hasOwnProperty(label)) {
         this.removeZoomLevel(label, false);
       }
     }
@@ -182,7 +182,7 @@ function KMLMManager(map, kmlFiles, zoomLevels, prefetchZoom, managerOptions) {
     // load kml files and add markers to the manager based to the current zoomLevel
     var level, url;
     for (var key in zoomLevels) {
-      if (zoomLevels.hasOwnProperty(key)) { 
+      if (zoomLevels.hasOwnProperty(key)) {
         level = zoomLevels[key];
         if (newLevel >= level) {
           fetchLevel(key);
@@ -221,13 +221,13 @@ function KMLMManager(map, kmlFiles, zoomLevels, prefetchZoom, managerOptions) {
     var xml = new GGeoXml(url);
 
     GEvent.addListener(xml, "load", function() {
-      this.extractMarkers = extractMarkers; 
+      this.extractMarkers = extractMarkers;
       kmlCache[url] = this.extractMarkers(); // on load error this is an empty array.
       getOverlay(url, minZoom);
     });
   }
 
-  // This function is applyed to the GGeoXml to access the internl markers array. 
+  // This function is applyed to the GGeoXml to access the internl markers array.
   function extractMarkers() {
     // console.log(this);
     if (this.hc) {
