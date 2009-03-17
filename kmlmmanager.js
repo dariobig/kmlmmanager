@@ -1,9 +1,8 @@
 /*
  * @name KMLMManager
- * @version 0.1
+ * @version 0.2
  * @copyright (c) 2009 Dario Bigongiari
  * @author Dario Bigongiari
- * @depends markermanager.js
  *
  * ------------------------------------------------------------------------------
  * The MIT License
@@ -80,13 +79,13 @@
 
 function KMLMManager(map, kmlFiles, zoomLevels, prefetchZoom, managerOptions) {
   // KMLMManager should be always instanciated using the "new" keyword.
-  //   map: is a GMap2 object (tested only with version 2.149, see above).
-  //   kmlFiles: is a flat object containing kml urls divided by labels.
-  //   zoomLevels: is a flat object containing the minimum zoomLevel for each kmlFiles label.
-  //   prefetchZoom: is an integer used to trigger prefetching of kml files before their actual
-  //                 zoomLevel (default: 2).
-  //   managerOptions: are the options to be passed to the MarkerManager object upon construction
-  //                   (default: {}).
+  //  map: is a GMap2 object (tested only with version 2.149, see above).
+  //  kmlFiles: is a flat object containing kml urls divided by labels.
+  //  zoomLevels: is a flat object containing the minimum zoomLevel for each kmlFiles label.
+  //  prefetchZoom: is an integer used to trigger prefetching of kml files before their actual
+  //                zoomLevel (default: 2).
+  //  managerOptions: are the options to be passed to the MarkerManager object upon construction
+  //                  (default: {}).
 
   // Registers an handler to update the MarkerManager and shows all the markers.
   // If prefetch array is specified, all the labels contained in the array are prefetched for faster
@@ -101,23 +100,25 @@ function KMLMManager(map, kmlFiles, zoomLevels, prefetchZoom, managerOptions) {
     listener = GEvent.addListener(map, "zoomend", loadOverlays);
     GEvent.trigger(map, "zoomend", map.getZoom());
     manager.show();
-  }
+  };
 
   // Hidea all the markers and prevent further loading.
   this.hide = function() {
     if (listener) { GEvent.removeListener(listener); }
     manager.hide();
-  }
+  };
 
   // Removes all markers from the manager. Markers are still cached.
   // If shouldRefresh is true it will also refresh the manager afterwards.
   this.removeAll = function(shouldRefresh) {
     for (label in zoomLevels) {
-      this.removeZoomLevel(label, false);
+      if (zoomLevels.hasOwnProperty(label)) { 
+        this.removeZoomLevel(label, false);
+      }
     }
 
     if (shouldRefresh) { manager.refresh(); }
-  }
+  };
 
   // Removes all markers associated with a zoomLevel from the MarkerManager.
   // Markers are still cached.
@@ -134,7 +135,7 @@ function KMLMManager(map, kmlFiles, zoomLevels, prefetchZoom, managerOptions) {
     }
 
     if (shouldRefresh) { manager.refresh(); }
-  }
+  };
 
   // Removes all the markers associated to a particular kml file from the managers and refreshes
   // the manger upon completion. Does not remove the overlay from cache.
@@ -181,9 +182,11 @@ function KMLMManager(map, kmlFiles, zoomLevels, prefetchZoom, managerOptions) {
     // load kml files and add markers to the manager based to the current zoomLevel
     var level, url;
     for (var key in zoomLevels) {
-      level = zoomLevels[key];
-      if (newLevel >= level) {
-        fetchLevel(key);
+      if (zoomLevels.hasOwnProperty(key)) { 
+        level = zoomLevels[key];
+        if (newLevel >= level) {
+          fetchLevel(key);
+        }
       }
     }
   }
@@ -191,9 +194,10 @@ function KMLMManager(map, kmlFiles, zoomLevels, prefetchZoom, managerOptions) {
   // Fetches an entire level. If zoomLevel is not specified uses default value.
   function fetchLevel(label, zoomLevel) {
     zoomLevel = zoomLevel || zoomLevels[label];
-    var files = kmlFiles[label];
-    for (var j in files) {
-      getOverlay(files[j], zoomLevel);
+    var files = kmlFiles[label], len = files.length, i = 0;
+    while (i < len) {
+      getOverlay(files[i], zoomLevel);
+      ++i;
     }
   }
 
@@ -206,9 +210,7 @@ function KMLMManager(map, kmlFiles, zoomLevels, prefetchZoom, managerOptions) {
 
     if (kmlCache[url]) {
       manager.addMarkers(kmlCache[url], minZoom);
-      if (done(url) < 1) {
-        manager.refresh();
-      };
+      if (done(url) < 1) { manager.refresh(); }
       isLoaded[url] = true;
       return;
     }
@@ -223,7 +225,7 @@ function KMLMManager(map, kmlFiles, zoomLevels, prefetchZoom, managerOptions) {
       kmlCache[url] = this.extractMarkers(); // on load error this is an empty array.
       getOverlay(url, minZoom);
     });
-  };
+  }
 
   // This function is applyed to the GGeoXml to access the internl markers array. 
   function extractMarkers() {
@@ -241,7 +243,7 @@ function KMLMManager(map, kmlFiles, zoomLevels, prefetchZoom, managerOptions) {
     if (loadingOverlay[url]) { return false; }
 
     loadingOverlay[url] = true;
-    loadingOverlay['nbr'] += 1;
+    loadingOverlay.nbr += 1;
     return true;
   }
 
@@ -249,9 +251,9 @@ function KMLMManager(map, kmlFiles, zoomLevels, prefetchZoom, managerOptions) {
   // It should be called at the end of a file request.
   function done(url) {
     loadingOverlay[url] = true;
-    var nbr = loadingOverlay['nbr'] -1;
+    var nbr = loadingOverlay.nbr -1;
     if (nbr < 0) { nbr = 0; }
-    loadingOverlay['nbr'] = nbr;
+    loadingOverlay.nbr = nbr;
 
     return nbr;
   }
